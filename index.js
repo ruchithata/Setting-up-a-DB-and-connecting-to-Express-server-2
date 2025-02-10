@@ -1,15 +1,22 @@
+require('dotenv').config();
 const express = require('express');
-const { resolve } = require('path');
+const connectDB = require('./db');
 
 const app = express();
-const port = 3010;
+app.use(express.json()); // Middleware to parse JSON
 
-app.use(express.static('static'));
+// Connect to MongoDB
+connectDB();
 
+// Define a simple route to check if the server is running
 app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+  res.send('Welcome to the User Management API!');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+// Import and use the user routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
